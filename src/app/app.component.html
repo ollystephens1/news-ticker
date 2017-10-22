@@ -1,20 +1,43 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-  <img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="container">
+  <div class="row header">
+    <div class="col-xs-12">
+      <h1>All the news <!-- <small>Showing {{ articles.length }} stories</small> --></h1>
+    </div>
+    <div class="col-xs-12 sources">
+      <ul>
+        <li *ngFor="let src of sources | async">
+          <button (click)="setSource(src)" 
+                  class="btn btn-primary btn-sm"
+                  [class.active]="isSourceSelected(src.id)">{{ src.name }}</button>
+        </li>
+      </ul>
+    </div>
+  </div>
 
+  <!-- row:Articles -->
+  <div class="row articles">
+    <spinner [ready]="ready" [message]="'Getting latest stories...'"></spinner>
+
+    <!-- col-3:Article -->
+    <div *ngFor="let article of articles" class="col-md-3 col-sm-4 col-xs-6">
+      <div class="article">
+        <div class="article-image" [ngStyle]="{'background-image': 'url(' + article.urlToImage + ')'}">
+          
+        </div>
+        <!-- <img class="img-fluid" [src]="article.urlToImage"> -->
+        <div class="article-content">
+          <h3>{{ article.title }}</h3>
+          <p>{{ article.description }}</p>
+        </div> 
+        <div class="article-footer">
+          <a href="{{ article.url }}" target="_blank"> Read more...</a>
+        </div>       
+      </div>
+    </div><!-- /.col-3:Article -->
+
+    <div *ngIf="ready && !articles.length" class="col-12 text-xs-center">
+      <p class="text-muted">No sources selected</p>
+    </div>
+
+  </div> <!-- /.row:Articles -->
+</div>
