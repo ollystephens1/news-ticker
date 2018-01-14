@@ -1,43 +1,74 @@
-<div class="container">
-  <div class="row header">
-    <div class="col-xs-12">
-      <h1>All the news <!-- <small>Showing {{ articles.length }} stories</small> --></h1>
-    </div>
-    <div class="col-xs-12 sources">
-      <ul>
-        <li *ngFor="let src of sources | async">
-          <button (click)="setSource(src)" 
-                  class="btn btn-primary btn-sm"
-                  [class.active]="isSourceSelected(src.id)">{{ src.name }}</button>
-        </li>
-      </ul>
-    </div>
+<div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper blue">
+        <a href="#!" class="brand-logo"><i class="material-icons">cloud</i>News<b>Meter</b></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="sass.html">Saved articles</a></li>
+          <li><a href="sass.html">Most popular</a></li>
+          <li><a href="badges.html">Olly</a></li>
+        </ul>
+      </div>
+    </nav>
   </div>
 
-  <!-- row:Articles -->
-  <div class="row articles">
-    <spinner [ready]="ready" [message]="'Getting latest stories...'"></spinner>
+<div class="container">
 
-    <!-- col-3:Article -->
-    <div *ngFor="let article of articles" class="col-md-3 col-sm-4 col-xs-6">
-      <div class="article">
-        <div class="article-image" [ngStyle]="{'background-image': 'url(' + article.urlToImage + ')'}">
-          
-        </div>
-        <!-- <img class="img-fluid" [src]="article.urlToImage"> -->
-        <div class="article-content">
-          <h3>{{ article.title }}</h3>
-          <p>{{ article.description }}</p>
-        </div> 
-        <div class="article-footer">
-          <a href="{{ article.url }}" target="_blank"> Read more...</a>
-        </div>       
-      </div>
-    </div><!-- /.col-3:Article -->
+   <!-- Tap Target Structure -->
+   <div class="tap-target" data-activates="menu">
+     <div class="tap-target-content">
+       <h5>Title</h5>
+       <p>A bunch of text</p>
+     </div>
+   </div>
 
-    <div *ngIf="ready && !articles.length" class="col-12 text-xs-center">
-      <p class="text-muted">No sources selected</p>
+  <!-- row:Categories -->
+  <div class="row mt-1">
+    <a (click)="start = !start;" 
+        class="btn-floating start-toggle btn-large waves-effect waves-light red"><i class="material-icons">add</i>
+    </a>
+
+    <div *ngIf="!start"  class="collection">
+      <a  *ngFor="let cat of categories" 
+          (click)="setCategory(cat.id)" 
+          href="#!" 
+          class="collection-item">{{ cat.name }}</a>
     </div>
 
-  </div> <!-- /.row:Articles -->
+
+    
+    <div *ngIf="categoryId && categoryId.length" class="collection">
+      <span  *ngFor="let src of sources | async" >
+          <a  *ngIf="!categoryId.length || src.category === categoryId"
+          (click)="setSource(src)" 
+          href="#!" 
+          [class.active]="isSourceSelected(src.id)"
+          class="collection-item">{{ src.name }}</a>
+      </span>
+    </div>
+
+  <!-- row:Articles -->
+  <div class="row">
+    <div class="col s12">
+      <spinner [ready]="ready"></spinner>
+    </div>
+
+    <div *ngFor="let article of articles" class="col s12 m4">
+      <div class="card">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img class="activator" [src]="article.urlToImage">
+        </div>
+        <div class="card-content">
+          <span class="card-title activator grey-text text-darken-4">{{ article.title }}</span>
+          <p>{{ article.description }}</p>
+          <p class="right-align"><a href="{{ article.url }}">Read more</a></p>
+        </div>
+      </div>
+  </div>
+
+  <div *ngIf="ready && !articles.length" class="row">
+    <p class="text-muted">No sources selected</p>
+  </div>
 </div>
+    
+
+

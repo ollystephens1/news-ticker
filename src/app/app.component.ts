@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Component, OnInit } from '@angular/core';
 import { NewsService } from './services/news.service';
@@ -14,10 +14,13 @@ import { ISource } from './interfaces/source.interface';
 })
 export class AppComponent implements OnInit {
 
-  ready:       boolean = false;
-  articles:    IArticle[] = [];
-  sources:     Observable<ISource[]>;
-  selectedSources: string[] = ['bbc-news'];
+  start = true;
+  ready = true;
+  articles: IArticle[] = [];
+  sources: Observable<ISource[]>;
+  selectedSources: string[] = [];
+  categories: object[] = [{ id: '', name: 'All news' }];
+  categoryId: string = '';
 
   constructor(private newsService: NewsService) { }
 
@@ -31,14 +34,23 @@ export class AppComponent implements OnInit {
       .subscribe((articles: IArticle[]) => {
         this.articles = articles.concat(this.articles);
         this.ready = true;
+        this.start = true;
       }, err => {
-        alert(err);
+        console.log(err);
       });
   }
 
   _getSources(): void {
-    this.sources = this.newsService.getSources()
-      .do(() => this._getArticles('bbc-news')); 
+    this.sources = this.newsService.getSources(); 
+
+    this.sources.subscribe((sources) => {
+      let categories = _.uniq(sources.map(source => source.category));
+
+      this.categories = this.categories.concat(_.map(categories, cat => {
+        let name = cat.replace(/\-/g, ' ');
+        return {id: cat, name: _.capitalize(name)};
+      }));
+    })
   }
 
   setSource(source): void {
@@ -49,6 +61,12 @@ export class AppComponent implements OnInit {
       this.articles = this.articles.filter(article => article.sourceId !== source.id);
       _.pull(this.selectedSources, source.id);
     } 
+
+    this.categoryId = undefined;
+  }
+
+  setCategory(id: string): void {
+    this.categoryId = id;
   }
 
   isSourceSelected(id: string): boolean {
